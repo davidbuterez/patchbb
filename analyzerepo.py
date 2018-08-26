@@ -118,7 +118,7 @@ def main(main_args):
     os.chdir(args['name'])
     subprocess.call(['git', 'checkout', commit], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    if not os.path.isfile('configure'):
+    if not os.path.isfile('configure') and not os.path.isfile('bootstrap'):
       print('Skipping commit %s as it doesn\'t have build files - probably too old' % (commit,))
       os.chdir(enclosing)
       continue
