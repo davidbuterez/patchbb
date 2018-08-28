@@ -46,10 +46,7 @@ namespace {
                 canon = canon.substr(found + Repo.length() + 1);
               }
               unsigned lineNo = loc.getLineNumber();
-              auto result = basicBlockMap.insert(std::make_pair(canon + ":" + std::to_string(lineNo), &BB));
-              if (result.second) {
-                std::cout << "Added " << canon + ":" + std::to_string(lineNo) << "\n";
-              }
+              basicBlockMap.insert(std::make_pair(canon + ":" + std::to_string(lineNo), &BB));
             }
           
           }
@@ -76,51 +73,35 @@ namespace llvm {
         actualJSON = JSON;
       }
       
-      std::cout << "le json: " << actualJSON << "\n";
       nlohmann::json patchJSON = nlohmann::json::parse(actualJSON);
 
       patches_info patch = patchJSON;
 
       for (auto const& [commit, filenameToLines] : patch) {
-        errs() << commit << "\n";
         std::set<BasicBlock*> bbs;
         for (auto const& [filename, lines] : filenameToLines) {
-          errs() << filename << ": ";
           for (auto const& lineNo : lines) {
-            errs() << lineNo << " ";
             auto found = basicBlockMap.find(filename + ":" + std::to_string(lineNo));
             if (found != basicBlockMap.end()) {
               bbs.insert(found->second);
-              errs() << "Found: " << filename + ":" + std::to_string(lineNo) << "\n";
-            } else {
-              errs() << "not found\n";
             }
           }
-          // errs() << "\n";
         }
 
         nlohmann::json jsonOutput;
 
         std::ifstream json_exists("BBCount.json");
         if (json_exists.good()) {
-          errs() << "Out file exists\n";
           std::ifstream input {"BBCount.json"};
           input >> jsonOutput;
         }
 
         if (jsonOutput.find(commit) != jsonOutput.end()) {
-          // errs() << "got here 0\n";
-          errs() << "Adding to existing\n";
           unsigned bbCount = jsonOutput[commit];
           jsonOutput[commit] = bbCount + bbs.size();
-          // errs() << "got here 01\n";
         } else {
-          // errs() << "got here 1\n";
-          errs() << "Emplacing new element\n";
           jsonOutput.emplace(commit, bbs.size());
-          // errs() << "got here 11\n";
         }
-        
 
         std::ofstream outfile("BBCount.json");
         outfile << std::setw(4) << jsonOutput << std::endl;

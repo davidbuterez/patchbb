@@ -14,10 +14,7 @@ if [ -f ./bootstrap ]; then
   check_exit
 fi
 
-autoreconf -f -i
-check_exit
-
-CC=wllvm ./configure -C -q --disable-nls CFLAGS="-g -O0"
+CC=wllvm ./configure -C -q --disable-nls CFLAGS="-O1 -g"
 check_exit
 
 CC=wllvm make -j3
