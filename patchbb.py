@@ -128,7 +128,7 @@ def main(main_args):
 
     # Build
     try:
-      subprocess.check_call(['./build.sh', args['name']])
+      subprocess.check_call(['./build.sh', args['name']], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
       print('There was an error building. Skipping commit...')
       continue
@@ -177,6 +177,7 @@ def main(main_args):
         opt_cmds.append('opt')
 
       opt_cmds.append('-load')
+      opt_cmds.append('-disable-output')
       opt_cmds.append(args['passpath'])
       opt_cmds.append('-countBB')
       opt_cmds.append('-repo-name')
