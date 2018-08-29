@@ -42,8 +42,16 @@ Additionally, you will need:
 Once cloned, run in the main directory:
 
 `cmake CMakeLists.txt`
+
 `make`
 
 This will build the pass. You can now call the script, as instructed above.
 
+## Known issues
+The main idea behind this tool is to be able to automatically look at a range of patches (maybe even all) for a repository and output the number of updated basic blocks for each revision. The main issue with this is that the files need to be built for every patch. This can be split into two separate problems:
+1. Especially for large and long-going projects, the building steps change over time
+2. Building, if successful, takes time (usually 5-10 minutes per patch)
 
+To address the first issue, the provided script, `build.sh`, can be customized with build instructions for any application. However, a bigger problem, which is not in my control, is that old revisions tipically just cannot be built on current distributions.
+
+Many projects, like `coreutils`, `binutils`, etc. have been around since the 90s. I haven't been able to build, even with manual tweaks, older versions on distributions like Ubuntu (18.04, 16.04) and Arch Linux. Even more recent patches, from around 2008-2009, cannot be built because of compilation errors. However, the workflow of the application is good, and could be customized for more specialized purposes. Recent versions of `findutils`, as shown in the examples, work fine.
